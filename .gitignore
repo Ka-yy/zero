@@ -1,0 +1,45 @@
+# Python
+*.py[cod]
+__pycache__/
+*.pyo
+*.pyd
+*.pyc
+*.db
+*.sqlite3
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.venv/
+.env
+my_env/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.vim/
+.vimrc/
+
+# Environment variables
+.env
+
+# Docker files
+docker-compose.yml
+Dockerfile
+
+# AWS credentials (if applicable)
+.aws/
+
+# Ignore any other sensitive files or directories you want to keep private.
