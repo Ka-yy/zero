@@ -1,8 +1,15 @@
+This project is going to be monolithic, with most(if not all) features being inside in a few Python files 
+
+
+
+
+
+
 # To do
 
 ## initialize the git repo locally and set the upstream
 
-then set the upstream branch. *i wont get into that because you guys should already know that*
+then set the upstream branch. *i won't get into that because you guys should already know that*
 
 ## create the virtual environment
 
