@@ -2,6 +2,10 @@ socket
 ftplib 
 requests 
 progress 
+argparse 
+threading
+os
+sys
 # one for time measurement 
 # another one for cli interfaces 
 # another for batch file integration 
