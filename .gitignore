@@ -42,4 +42,4 @@ Dockerfile
 # AWS credentials (if applicable)
 .aws/
 
-# Ignore any other sensitive files or directories you want to keep private.
+# other sensitive files or directories you want to keep private.

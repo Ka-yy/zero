@@ -1,36 +1,13 @@
-# To do
+# Zero
 
-## initialize the git repo locally and set the upstream
+This is a CLI based file transfer tool used to send files over the same network, or different networks.
 
-then set the upstream branch. *i wont get into that because you guys should already know that*
+## Usage
 
-## create the virtual environment
+* run the application
+* select the operation, (sending/receiving)
 
- ```bash
- python -m venv my_env
-```
+To send:
 
-This creates a `my_env` directory in your project folder.
-
-### running the environment
-
-#### if you're using a bash terminal
-
-```bash
-. my_env/Scripts/activate 
-```
-
-#### if youre using cmd
-
-```cmd
-cd my_env/Scripts
-.\activate
-```
-
-paste this and press `enter`
-
-your terminal should look like this, for example:
-
-```bash
-(my_env)kufre@erfuk:~/code/network-programming-project$ 
-```
+* select the protocol, location of the receiver and names of files to send
+The sender will attempt to make a connection with the receiver, and the file transfer starts immediately after

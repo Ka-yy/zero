@@ -1,9 +1,8 @@
-socket 
-ftplib 
 requests 
 progress 
-# one for time measurement 
-# another one for cli interfaces 
-# another for batch file integration 
-# we'll also need a dotenv file for environment management 
-
+argparse 
+progressbar2
+requests
+paramiko
+pyftpdlib 
+flask
