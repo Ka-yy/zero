@@ -1,57 +1,87 @@
+"""
+
+ZERO CLIENT OPERATIONS
+
+NOTE: Due to the architecture, the client is always sending code, while server is always receiving files
+
+TODO: Start client server
+TODO: Define methods for all the different client methods: ftp, sftp, http, https,  
+                                                                    
+
+"""
 import socket
 import os
-import argparse
-## send the file 
-
-"""
-TODO: make sure to use argparse to collect the Cli arguments 
-
-"""
+import ftplib 
+import requests 
+from progress.bar import Bar
+from paramiko import Transport, SFTPClient
 
 class client():
+    # initialize and show the supported transfer protocols
+    def __init__(self):
+        self.supported_protocols = {
+            'ftp': self.ftp_send,
+            'sftp': self.sftp_send,
+            'http': self.http_send,
+            'https': self.https_send,
+        }
 
-    def send_file(file_names, host='127.0.0.1', port=65432):
+    # send using ftp with authentication
+    def ftp_send(self, host, port, username, password, filePath):
         try:
-            # start the socket, bind it to a port and connect 
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect((host, port))
-
-            # Send files sequentially 
-            for file_name in file_names:
-                # confirm if the file exists 
-                if not os.path.isfile(file_name):
-                    print(f"File not found: {file_name}")
-                    continue
-                
-                # show file size 
-                file_size = os.path.getsize(file_name)
-
-                #send the file size to the server 
-                client_socket.send(str(file_size).encode())
-                client_socket.recv(1024)  # Wait for ACK from server 
-
-                with open(file_name, 'rb') as f:
-                    bytes_sent = 0
-                    while bytes_sent < file_size:
-                        data = f.read(1024)
-                        if not data:
-                            break
-                        client_socket.send(data)
-                        bytes_sent += len(data)
-                        print(f'Sending {file_name}: {bytes_sent / file_size * 100:.2f}%')
-                
-                response = client_socket.recv(1024).decode()
-                print(response)
+            with ftplib.FTP() as ftp:
+                ftp.connect(host, port)
+                ftp.login(username, password)
+                with open(filePath, 'rb') as file:
+                    ftp.storbinary(f'STOR {os.path.basename(filePath)}', file)
+                print(f"file {filePath} send successfully via FtP.")
         except Exception as e:
-            print(f'Error sending files: {e}')
-        finally:
-            client_socket.close()
+            print(f"Error sending file via FTP: {e}")
 
-    if __name__ == '__main__':
-        print("Type 'send <IP/DNS>' followed by comma-separated filenames.")
-        command = input("> ").strip().split()
-        
-        if command[0].lower() == 'send':
-            host = command[1]
-            files_to_send = command[2].split(',') if len(command) > 2 else []
-            send_file([f.strip() for f in files_to_send], host)
+    '''
+    Send using sftp with authentication(login, password)
+
+    NOTE: The differnce between the two is that sftp creates an ssh session, 
+    then uses ftp through the running ssh session 
+
+    ''' 
+    def sftp_send(self, host, port, username, password, filePath):
+        try:
+            
+            transport = Transport((host, port))
+            transport.connect(username=username, password=password)
+            sftp = SFTPClient.from_transport(transport)
+            sftp.put(filePath, os.path.basename(filePath))
+            print(f"file {filePath} send successfully via SFTP.")
+            transport.close()
+        except Exception as e:
+            print(f"Error sending file via SFTP: {e}")
+
+
+    '''
+    send using http POST request
+    ''' 
+    def http_send(self, url, filePath):
+        try:
+            with open(filePath, 'rb') as file:
+                files = {'file':file}
+                response = requests.post(url, files=files)
+            if response.status_code ==200:
+                print(f"File{filePath} sent successfully via HTTP.")
+            else:
+                print(f"Error sending file. Status code: {response.status_code}")
+        except Exception as e:
+            print(f"Error sending file via Http: {e}")
+
+
+    # send using https 
+    def https_send(self, url, filePath):
+        # https and http use the EXact same method, just a different url scheme/type
+        self.http_send(url, filePath)
+
+    def send_files(self, protocol, **kwargs):
+        if protocol not in self.supported_protocols:
+            print("unsupported protocol used, try using the correct protocol")
+            self.supported_protocols[protocol](**kwargs)
+        else:
+            print(f"Unsupported protocol: {protocol}")
