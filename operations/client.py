@@ -1,6 +1,5 @@
 """
-
-ZERO CLIENT OPERATIONS
+Zero client operations 
 
 NOTE: Due to the architecture, the client is always sending code, while server is always receiving files
 
