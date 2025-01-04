@@ -67,7 +67,6 @@ Supported Protocols:
     parser.add_argument('--username', '-u', help='Username for authentication')
     parser.add_argument('--file', '-f', help='Path to file(s) for sending')
 
-    # Rest of the main() function remains the same
     args = parser.parse_args()
 
     if args.send:
