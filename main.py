@@ -1,28 +1,3 @@
-# import argparse  
-"""
-TODO: make a terminal help for the usage of the app
-    the usage of the app should look like: 
-    '''shell
-        ## Input 
-        zero --help
-        # OUTPUT 
-        Usage: select send or receive to send/recieve files 
-        arguments
-        --send, -s [send]
-                    [Protocols]
-                    -ftp 
-                    -sftp
-                    -http
-                    -htttps 
-                        --ip:port/dns:port [location of receiver]
-                            -- path/to/file(s)
-        --receive, -r [receive]
-    '''
-TODO: use argparse to give a choice, select whether to send or receive (client/server)
-
-NOTE: to use the predefinded functions, create a new object and then call the methods
-"""
-
 import argparse
 from operations.client import client
 from operations.server import Server
@@ -39,27 +14,30 @@ def main():
         show_quick_help()
         return
 
+    # Setup ArgumentParser
     parser = argparse.ArgumentParser(
         description='Zero - File Transfer Tool',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Example:
-  Send file uing FTP:
-    zero -s -p ftp --host ftp.example.com --file path/to/file
+        epilog="""Example:
+    Send file using FTP:
+        zero -s -p ftp --host ftp.example.com --file path/to/file
   
-  Start SFTP receiver:
-    zero -r -p sftp
+    Start SFTP receiver:
+        zero -r -p sftp
         
 Supported Protocols:
-  FTP   : Basic FTP transfer (requires authentication)
-  SFTP  : Secure FTP over SSH
-  HTTP  : Basic HTTP transfer
-  HTTPS : Secure HTTP transfer""")
+    FTP   : Basic FTP transfer (requires authentication)
+    SFTP  : Secure FTP over SSH
+    HTTP  : Basic HTTP transfer
+    HTTPS : Secure HTTP transfer"""
+    )
     
+    # Add mutually exclusive options for send/receive
     mode_group = parser.add_mutually_exclusive_group(required=True)
     mode_group.add_argument('--send', '-s', action='store_true', help='Send files to a remote server')
     mode_group.add_argument('--receive', '-r', action='store_true', help='Start server to receive files')
     
+    # Arguments for protocol and connection
     parser.add_argument('--protocol', '-p', choices=['ftp', 'sftp', 'http', 'https'],
                       help='Transfer protocol')
     parser.add_argument('--host', help='Target host address')
@@ -69,12 +47,14 @@ Supported Protocols:
 
     args = parser.parse_args()
 
+    # Sending files logic
     if args.send:
         if not all([args.protocol, args.host, args.file]):
             parser.error("Send mode requires --protocol, --host, and --file arguments")
         
         c = client()
         
+        # Handle FTP and SFTP (which require authentication)
         if args.protocol in ['ftp', 'sftp']:
             if not args.username:
                 args.username = input("Username: ")
@@ -87,6 +67,8 @@ Supported Protocols:
                 c.ftp_send(args.host, args.port, args.username, password, args.file)
             else:
                 c.sftp_send(args.host, args.port, args.username, password, args.file)
+        
+        # Handle HTTP and HTTPS (which do not require authentication)
         else:
             url = f"{args.protocol}://{args.host}"
             if args.port:
@@ -98,10 +80,23 @@ Supported Protocols:
             else:
                 c.https_send(url, args.file)
     
+    # Receiving files logic (start server)
     else:
         print("Starting server...")
         server = Server()
-        server.start()
+        
+        # Start the server for the selected protocol
+        if args.protocol == 'ftp':
+            server.start_ftp_server()
+        elif args.protocol == 'sftp':
+            server.start_sftp_server()
+        elif args.protocol == 'http':
+            server.start_http_server()
+        elif args.protocol == 'https':
+            server.start_https_server()
+        else:
+            print("Unsupported protocol for receiving files.")
+            sys.exit(1)
 
 if __name__ == "__main__":
     try:
