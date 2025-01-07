@@ -24,8 +24,8 @@ NOTE: to use the predefinded functions, create a new object and then call the me
 """
 
 import argparse
-from client import client
-from server import Server
+from operations.client import client
+from operations.server import Server
 import sys
 from getpass import getpass
 
