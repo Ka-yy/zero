@@ -6,3 +6,5 @@ requests
 paramiko
 pyftpdlib 
 flask
+getpass
+pyinstaller

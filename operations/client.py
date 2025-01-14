@@ -14,26 +14,59 @@ class client():
             'https': self.https_send,  # Maps 'https' to the https_send method
         }
 
+    
     # FTP transfer method with authentication (username & password)
+
     def ftp_send(self, host, port, username, password, filePath):
         """
-        This method sends a file using the FTP protocol. 
-        It connects to the server, logs in with the given credentials,
-        and uploads the file.
+        Sends a file using FTP protocol with proper authentication.
         """
         try:
             with ftplib.FTP() as ftp:
-                # Connect to the FTP server
+                # Connect to server
+                print(f"Connecting to FTP server at {host}:{port}...")
                 ftp.connect(host, port)
-                # Login with the provided credentials
+                
+                # Login with credentials
+                print("Authenticating...")
                 ftp.login(username, password)
-                # Open the file in binary read mode and send it to the server
+                
+                # Upload file
+                print(f"Uploading {filePath}...")
                 with open(filePath, 'rb') as file:
-                    # Store the file with the same name on the server
                     ftp.storbinary(f'STOR {os.path.basename(filePath)}', file)
                 print(f"File {filePath} sent successfully via FTP.")
+        except ftplib.error_perm as e:
+            if "530" in str(e):  # Authentication error
+                print("Authentication failed. Please check username and password.")
+            else:
+                print(f"Permission error: {e}")
         except Exception as e:
             print(f"Error sending file via FTP: {e}")
+
+
+
+    # def ftp_send(self, host, port, username, password,  filePath):
+    #     """
+    #     This method sends a file using the FTP protocol. 
+    #     It connects to the server, logs in with the given credentials,
+    #     and uploads the file.
+    #     """
+    #     try:
+    #         with ftplib.FTP() as ftp:
+    #             # Connect to the FTP server
+    #             ftp.connect(host, port)
+    #             # Login with the provided credentials
+
+    #             # ftp.login(username, password)
+
+    #             # Open the file in binary read mode and send it to the server
+    #             with open(filePath, 'rb') as file:
+    #                 # Store the file with the same name on the server
+    #                 ftp.storbinary(f'STOR {os.path.basename(filePath)}', file)
+    #             print(f"File {filePath} sent successfully via FTP.")
+    #     except Exception as e:
+    #         print(f"Error sending file via FTP: {e}")
 
     '''
     SFTP transfer method with authentication (login, password)

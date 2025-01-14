@@ -1,3 +1,4 @@
+import getpass
 import os
 from flask import Flask, request
 import paramiko
@@ -17,26 +18,69 @@ class Server:
             os.makedirs(self.upload_folder)
 
     # FTP Server Setup
-    def start_ftp_server(self):
-        """
-        This function sets up and starts an FTP server that allows file transfers
-        using FTP protocol. It uses pyftpdlib library for FTP functionality.
-        """
-        # Creating an authorizer object to handle user authentication
-        authorizer = DummyAuthorizer()
-        # Adding a user with 'user' as username, 'password' as password, and upload folder as home directory
-        # 'elradfmw' gives the user permissions like reading, writing, etc.
-        authorizer.add_user('user', 'password', self.upload_folder, perm='elradfmw')
-        
-        # Creating a handler for FTP requests
-        handler = FTPHandler
-        handler.authorizer = authorizer  # Linking the authorizer to the handler
-        # Creating an FTP server object that listens on the specified host and port
-        server = FTPServer((self.host, self.port), handler)
-        print(f"Starting FTP server at {self.host}:{self.port}")
-        # Starting the server and it will keep running
-        server.serve_forever()
 
+
+    # def start_ftp_server(self):
+    #     """
+    #     This function sets up and starts an FTP server that allows file transfers
+    #     using FTP protocol. It uses pyftpdlib library for FTP functionality.
+    #     """
+    #     # Creating an authorizer object to handle user authentication
+    #     authorizer = DummyAuthorizer()
+    #     # Adding a user with 'user' as username, 'password' as password, and upload folder as home directory
+    #     # 'elradfmw' gives the user permissions like reading, writing, etc.
+    #     authorizer.add_user('user', 'password', self.upload_folder, perm='elradfmw')
+        
+    #     # Creating a handler for FTP requests
+    #     handler = FTPHandler
+    #     handler.authorizer = authorizer  # Linking the authorizer to the handler
+    #     # Creating an FTP server object that listens on the specified host and port
+    #     server = FTPServer((self.host, self.port), handler)
+    #     print(f"Starting FTP server at {self.host}:{self.port}")
+    #     # Starting the server and it will keep running
+    #     server.serve_forever()
+
+    def start_ftp_server(self):
+            """
+            Starts FTP server with user-provided credentials.
+            Credentials are valid only for the current session.
+            """
+            # Get credentials from user
+            print("Set up FTP server credentials:")
+            username = input("Enter username for FTP server: ")
+            password = getpass.getpass("Enter password for FTP server: ")
+            
+            try:
+                # Create authorizer and add user
+                authorizer = DummyAuthorizer()
+                authorizer.add_user(
+                    username,
+                    password,
+                    self.upload_folder,
+                    perm='elradfmw'  # Full permissions
+                )
+                
+                # Set up handler
+                handler = FTPHandler
+                handler.authorizer = authorizer
+                
+                # Create and start server
+                server = FTPServer((self.host, self.port), handler)
+                print(f"\nFTP server started at {self.host}:{self.port}")
+                print(f"Username: {username}")
+                print("Credentials will be cleared when server stops")
+                server.serve_forever()
+                
+            except Exception as e:
+                print(f"Error starting FTP server: {e}")
+            finally:
+                # Clean up authorizer (credentials are cleared when server stops)
+                if 'authorizer' in locals():
+                    try:
+                        authorizer.remove_user(username)
+                    except:
+                        pass
+                    
     # SFTP Server Setup using Paramiko (secure FTP over SSH)
     def start_sftp_server(self):
         """

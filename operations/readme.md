@@ -1,9 +1,17 @@
-# NOTE: The operations abstracted from main are located here
+# Client
 
-## Client
+Always on the sending side of the connection
 
-### Dependencies
+Initiates the connection to the servers then sends the files over the selected protocol
+
+## Dependencies
+
+* Flask server  
+* argument parser
+* paramiko
+Other default libraries used for python networking
 
 ## Server
 
-### Dependencies
+Always on the receiving end of the operation.
+It runs servers the corresponding to the connections initiated from the client side
