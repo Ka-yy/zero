@@ -1,0 +1,9 @@
+Errors: 2/4 server protocols failed 
+
+sftp server doesnt work
+    the error is traced back to operations.start_sftp_server
+    the arguments enetered for authentication are not correlating to those predefined
+
+https server doesnt work 
+    the flask server only serves the http server and not the https server 
+

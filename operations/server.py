@@ -9,7 +9,7 @@ from pyftpdlib.servers import FTPServer
 class Server:
     def __init__(self):
         # Setting up the server host and port
-        self.host = '0.0.0.0'  # The server will listen on all available network interfaces (all IP addresses)
+        self.host = input(' Enter Host  ')   # The server will listen on all available network interfaces (all IP addresses)
         self.port = 21  # Default FTP port
         self.upload_folder = "uploads"  # Directory where uploaded files will be stored
 
@@ -19,26 +19,6 @@ class Server:
 
     # FTP Server Setup
 
-
-    # def start_ftp_server(self):
-    #     """
-    #     This function sets up and starts an FTP server that allows file transfers
-    #     using FTP protocol. It uses pyftpdlib library for FTP functionality.
-    #     """
-    #     # Creating an authorizer object to handle user authentication
-    #     authorizer = DummyAuthorizer()
-    #     # Adding a user with 'user' as username, 'password' as password, and upload folder as home directory
-    #     # 'elradfmw' gives the user permissions like reading, writing, etc.
-    #     authorizer.add_user('user', 'password', self.upload_folder, perm='elradfmw')
-        
-    #     # Creating a handler for FTP requests
-    #     handler = FTPHandler
-    #     handler.authorizer = authorizer  # Linking the authorizer to the handler
-    #     # Creating an FTP server object that listens on the specified host and port
-    #     server = FTPServer((self.host, self.port), handler)
-    #     print(f"Starting FTP server at {self.host}:{self.port}")
-    #     # Starting the server and it will keep running
-    #     server.serve_forever()
 
     def start_ftp_server(self):
             """
@@ -100,6 +80,9 @@ class Server:
         """
         This function sets up a simple HTTP server using Flask.
         The server will allow file uploads via HTTP POST requests to the /upload endpoint.
+
+
+        note: this isnt the safest way to ge this done.. (a wsgi server should be used instead)
         """
         app = Flask(__name__)  # Initializing the Flask application
 

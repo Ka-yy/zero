@@ -18,14 +18,13 @@
                              -- path/to/file(s) 
          --receive, -r [receive] 
      ''' 
- TODO: use argparse to give a choice, select whether to send or receive (client/server) 
-  
+
  NOTE: to use the predefinded functions, create a new object and then call the methods 
  """ 
 
 
 # import argparse // no need for this anymore 
-from operations.client import client
+from operations.client import client 
 from operations.server import Server
 import sys
 from getpass import getpass
